@@ -1,4 +1,5 @@
 import {Schema,model} from 'mongoose'
+import bcrytpt from 'bcryptjs'
 
 const userSchema =new Schema({
     username:{
@@ -22,8 +23,13 @@ const userSchema =new Schema({
     }
 );
 
-userSchema.statics.encryptPassword=async(password)=>{}
+userSchema.statics.encryptPassword=async(password)=>{
+  const salt = await bcrytpt.genSalt(10)
+  return await bcrytpt.hash(password,salt)
+}
 
-userSchema.statics.comparePassword = async(password,receivedPassword)=>{}
+userSchema.statics.comparePassword = async(password,receivedPassword)=>{
+    return await bcrytpt.compare(password,receivedPassword)
+}
 
-export default userSchema;
+export default model('User',userSchema) ;
